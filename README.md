@@ -7,9 +7,64 @@
 [![PyPi total downloads](https://static.pepy.tech/personalized-badge/nemo-toolkit?period=total&units=international_system&left_color=grey&right_color=brightgreen&left_text=downloads)](https://pepy.tech/project/nemo-toolkit)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-# **NVIDIA NeMo Framework**
+# **NVIDIA NeMo Framework — Emirati Arabic (ar-AE) TTS Fork**
 
-## Latest News
+> **This is a fork of [NVIDIA NeMo](https://github.com/NVIDIA-NeMo/NeMo) that adds Emirati Arabic dialect support for VITS text-to-speech synthesis.**
+
+## What's Added: Emirati Arabic G2P
+
+This fork introduces **EmiratiG2P** — a grapheme-to-phoneme module for the Emirati (Gulf) Arabic dialect (`ar-AE`), designed to plug into NeMo's TTS pipeline (e.g. VITS). It extends NeMo's `IpaG2p` base class with dialect-specific phonological rules.
+
+### Key Features
+
+- **Qaf fronting** (`ق → ɡ`) — the hallmark Emirati/Gulf pronunciation
+- **Diphthong monophthongization** (`او → oː`, `اي → eː`)
+- **Optional kaf palatalization** (`ك → tʃ` for feminine suffix)
+- **Sun letter assimilation** for the definite article
+- **Vowel insertion heuristics** to break consonant clusters in undiacritized text
+- **Mixed Arabic/English code-switching** with configurable fallback strategies
+- **Full diacritics awareness** (harakat, shadda, tanwin)
+- **Custom phoneme dictionary support** (file-based or Python dict)
+- **20+ configurable parameters** for fine-grained dialect control
+
+### New Files
+
+| File | Description |
+|------|-------------|
+| `nemo/collections/tts/g2p/models/ar_ae_ipa.py` | EmiratiG2P class (1127 lines) |
+| `tests/collections/tts/g2p/test_emirati_g2p.py` | 19 unit tests covering all features |
+
+### Quick Usage
+
+```python
+from nemo.collections.tts.g2p.models.ar_ae_ipa import EmiratiG2P
+
+g2p = EmiratiG2P(phoneme_dict="path/to/emirati_dict.txt")
+phonemes = g2p("السلام عليكم")
+
+# With optional features:
+g2p = EmiratiG2P(
+    phoneme_dict="emirati_dict.txt",
+    enable_k_to_tsh=True,
+    enable_vowel_insertion=True,
+    enable_en_g2p=True,
+)
+phonemes = g2p("hello مرحبا")  # Mixed text
+```
+
+### YAML Configuration
+
+```yaml
+g2p:
+  _target_: nemo.collections.tts.g2p.models.ar_ae_ipa.EmiratiG2P
+  phoneme_dict: "path/to/arabic_dict.txt"
+  enable_k_to_tsh: false
+  enable_vowel_insertion: false
+```
+
+---
+
+## Latest News (Upstream NeMo)
 
 <!-- markdownlint-disable -->
 <details open>
